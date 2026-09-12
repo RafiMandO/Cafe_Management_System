@@ -31,8 +31,8 @@ $success = $success ?? '';
                 <div class="message error"><?= htmlspecialchars($errors[0], ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
             <form method="post" action="index.php?page=login">
-                <label for="email">Email address</label>
-                <input id="email" name="email" type="email" placeholder="you@example.com" required autofocus>
+                <label for="login">Username or email</label>
+                <input id="login" name="login" type="text" placeholder="you@example.com" required autofocus>
 
                 <label for="password">Password</label>
                 <input id="password" name="password" type="password" placeholder="Enter your password" required>

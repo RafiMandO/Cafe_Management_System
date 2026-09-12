@@ -23,6 +23,9 @@
                 <label for="name">Full name</label>
                 <input id="name" name="name" type="text" placeholder="Your name" required value="<?= htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" placeholder="your_username" pattern="[A-Za-z0-9_]{3,50}" required value="<?= htmlspecialchars($_POST['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+
                 <label for="email">Email address</label>
                 <input id="email" name="email" type="email" placeholder="you@example.com" required value="<?= htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
