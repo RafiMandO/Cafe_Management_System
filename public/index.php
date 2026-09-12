@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+require __DIR__ . '/../config/database.php';
+require __DIR__ . '/../app/models/User.php';
+
+$userModel = new User($pdo);
+
 $page = $_GET['page'] ?? 'login';
 $errors = [];
 $success = '';
@@ -33,24 +38,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if (!$errors) {
-            $_SESSION['user'] = [
-                'name' => $name,
-                'email' => $email,
-                'password' => password_hash($password, PASSWORD_DEFAULT),
-            ];
-            $success = 'Account created. You can now log in.';
-            $page = 'login';
+            try {
+                $userModel->create($name, $email, $password);
+                $success = 'Account created. You can now log in.';
+                $page = 'login';
+            } catch (PDOException $exception) {
+                if ($exception->getCode() === '23000') {
+                    $errors[] = 'An account with this email already exists.';
+                } else {
+                    $errors[] = 'Unable to create the account right now.';
+                }
+            }
         }
     } elseif ($page === 'login') {
-        $user = $_SESSION['user'] ?? null;
+        $user = $userModel->findByEmail($email);
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $password === '') {
             $errors[] = 'Enter your email and password.';
-        } elseif (!$user || $user['email'] !== $email || !password_verify($password, $user['password'])) {
+        } elseif (!$user || !password_verify($password, $user['password'])) {
             $errors[] = 'Email or password is incorrect.';
         }
 
         if (!$errors) {
+            $_SESSION['user'] = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+            ];
             $_SESSION['logged_in'] = true;
             header('Location: index.php?page=welcome');
             exit;
